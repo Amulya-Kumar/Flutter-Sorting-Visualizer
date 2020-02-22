@@ -137,6 +137,98 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  void merge(int l, int m, int r) async {
+    int i, j, k;
+    int n1 = m - l + 1;
+    int n2 = r - m;
+
+    List<double> left = List<double>(n1);
+    List<double> right = List<double>(n2);
+
+    for (i = 0; i < n1; i++) {
+      left[i] = valueList[l + i];
+    }
+    for (j = 0; j < n2; j++) {
+      right[j] = valueList[m + 1 + j];
+    }
+    i = 0; // Initial index of first subarray
+    j = 0; // Initial index of second subarray
+    k = l; // Initial index of merged subarray
+
+    while (i < n1 && j < n2) {
+      if (left[i] <= right[j]) {
+        await Future.delayed(const Duration(milliseconds: 20), () {
+          setState(() {
+            stateList[k] = 2;
+          });
+        });
+        await Future.delayed(const Duration(milliseconds: 50), () {
+          setState(() {
+            valueList[k] = left[i];
+          });
+        });
+        await Future.delayed(const Duration(milliseconds: 20), () {
+          setState(() {
+            stateList[k] = 4;
+          });
+        });
+        i++;
+      } else {
+        await Future.delayed(const Duration(milliseconds: 20), () {
+          setState(() {
+            stateList[k] = 2;
+            valueList[k] = right[j];
+            stateList[k] = 4;
+          });
+        });
+        j++;
+      }
+      k++;
+    }
+
+    /* Copy the remaining elements of L[], if there 
+       are any */
+    while (i < n1) {
+      await Future.delayed(const Duration(milliseconds: 20), () {
+        setState(() {
+          valueList[k] = left[i];
+        });
+      });
+      
+      i++;
+      k++;
+    }
+
+    /* Copy the remaining elements of R[], if there 
+       are any */
+    while (j < n2) {
+      await Future.delayed(const Duration(milliseconds: 20), () {
+        setState(() {
+          valueList[k] = right[j];
+        });
+      });
+      j++;
+      k++;
+    }
+  }
+
+  void mergeSort(int l, int r) async {
+    if (l < r) {
+      int m = ((l + r) ~/ 2);
+      await mergeSort(l, m);
+      await mergeSort(m + 1, r);
+
+      await merge(l, m, r);
+    }
+  }
+
+  void doMergeSort() async {
+    await mergeSort(0, (valueList.length - 1));
+    for (int i = 0; i < valueList.length; i++) {
+      stateList[i] = 3;
+    }
+  }
+
   void bubbleSort() async {
     int len = valueList.length;
     for (int i = 0; i < len - 1; i++) {
@@ -177,16 +269,16 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  void refreshState(){
+  void refreshState() {
     for (int i = 0; i < valueList.length; i++) {
       var rnd = new Random();
       double res = rnd.nextDouble();
       setState(() {
-        valueList[i] = res; 
+        valueList[i] = res;
       });
     }
 
-    for(int i = 0; i < valueList.length; i++){
+    for (int i = 0; i < valueList.length; i++) {
       stateList[i] = 1;
     }
   }
@@ -196,7 +288,7 @@ class _MyHomePageState extends State<MyHomePage> {
     for (int i = 0; i < valueList.length; i++) {
       var rnd = new Random();
       double res = rnd.nextDouble();
-      valueList[i] = res; 
+      valueList[i] = res;
     }
     super.initState();
   }
@@ -222,7 +314,7 @@ class _MyHomePageState extends State<MyHomePage> {
           IconButton(icon: Icon(Icons.refresh), onPressed: refreshState),
           RaisedButton(
             onPressed: () async {
-              await bubbleSort();
+              await mergeSort(0, valueList.length-1);
               //await insertionSort();
             },
             child: Text("Bubble Sort"),
@@ -240,6 +332,13 @@ class _MyHomePageState extends State<MyHomePage> {
               //await insertionSort();
             },
             child: Text("Insertion Sort"),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              await doMergeSort();
+              //await insertionSort();
+            },
+            child: Text("Merge Sort"),
           )
         ],
       ),
