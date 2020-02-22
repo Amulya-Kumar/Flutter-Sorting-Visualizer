@@ -28,9 +28,10 @@ class MyHomePage extends StatefulWidget {
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
+
 List<Bar> barList = List<Bar>(50);
-List<double> valueList = List<double>(50); 
-List<int> stateList = List<int>.filled(50, 1); 
+List<double> valueList = List<double>(50);
+List<int> stateList = List<int>.filled(50, 1);
 
 class _MyHomePageState extends State<MyHomePage> {
   void swap(int a, int b) async {
@@ -43,24 +44,122 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void insertionSort() async {
+    for (int i = 1; i < valueList.length; i++) {
+      double key = valueList[i];
+      int j = i - 1;
+      while (j >= 0 && key < valueList[j]) {
+        if (stateList[j] == 3 ||
+            stateList[j + 1] == 3 ||
+            stateList[j] == 1 ||
+            stateList[j + 1] == 1 ||
+            stateList[j] == 4 ||
+            stateList[j + 1] == 4) {
+          await Future.delayed(const Duration(milliseconds: 20), () {
+            setState(() {
+              stateList[j] = 2;
+              stateList[j + 1] = 2;
+            });
+          });
+        }
+        await swap(j, j + 1);
+        await Future.delayed(const Duration(milliseconds: 20), () {
+          setState(() {
+            stateList[j] = 4;
+            stateList[j + 1] = 4;
+          });
+        });
+        j -= 1;
+      }
+      valueList[j + 1] = key;
+    }
+    for (int i = 0; i < valueList.length; i++) {
+      stateList[i] = 3;
+    }
+  }
+
+  dynamic partition(int low, int high) async {
+    int i = low - 1;
+    double pivot = valueList[high];
+    for (int j = low; j < high; j++) {
+      if (valueList[j] < pivot) {
+        i = i + 1;
+        if (stateList[j] == 3 ||
+            stateList[i] == 3 ||
+            stateList[j] == 1 ||
+            stateList[i] == 1 ||
+            stateList[j] == 4 ||
+            stateList[i] == 4) {
+          await Future.delayed(const Duration(milliseconds: 20), () {
+            setState(() {
+              stateList[j] = 2;
+              stateList[i] = 2;
+            });
+          });
+        }
+        await swap(i, j);
+        await Future.delayed(const Duration(milliseconds: 20), () {
+          setState(() {
+            stateList[j] = 4;
+            stateList[i] = 4;
+          });
+        });
+      }
+    }
+    if (stateList[high] == 3 ||
+        stateList[i + 1] == 3 ||
+        stateList[high] == 1 ||
+        stateList[i + 1] == 1 ||
+        stateList[high] == 4 ||
+        stateList[i + 1] == 4) {
+      await Future.delayed(const Duration(milliseconds: 20), () {
+        setState(() {
+          stateList[high] = 2;
+          stateList[i + 1] = 2;
+        });
+      });
+    }
+    await swap(i + 1, high);
+    await Future.delayed(const Duration(milliseconds: 20), () {
+      setState(() {
+        stateList[high] = 4;
+        stateList[i + 1] = 4;
+      });
+    });
+    return i + 1;
+  }
+
+  void quickSort(int low, int high) async {
+    if (low < high) {
+      var pi = await partition(low, high);
+      await quickSort(low, pi - 1);
+      await quickSort(pi + 1, high);
+    }
+  }
+
   void bubbleSort() async {
     int len = valueList.length;
     for (int i = 0; i < len - 1; i++) {
       for (int j = 0; j < len - i - 1; j++) {
         if (valueList[j] > valueList[j + 1]) {
-          if(stateList[j] == 3 || stateList[j+1] == 3 || stateList[j] == 1 || stateList[j+1] == 1 || stateList[j] == 4 || stateList[j+1] == 4){
-            await Future.delayed(const Duration(milliseconds: 50), () {
+          if (stateList[j] == 3 ||
+              stateList[j + 1] == 3 ||
+              stateList[j] == 1 ||
+              stateList[j + 1] == 1 ||
+              stateList[j] == 4 ||
+              stateList[j + 1] == 4) {
+            await Future.delayed(const Duration(milliseconds: 20), () {
               setState(() {
                 stateList[j] = 2;
-                stateList[j+1] = 2;
+                stateList[j + 1] = 2;
               });
             });
           }
           await swap(j, j + 1);
-          await Future.delayed(const Duration(milliseconds: 50), () {
+          await Future.delayed(const Duration(milliseconds: 20), () {
             setState(() {
               stateList[j] = 4;
-              stateList[j+1] = 4;
+              stateList[j + 1] = 4;
             });
           });
         }
@@ -68,15 +167,36 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     for (int i = 0; i < len; i++) {
       stateList[i] = 3;
-    }  
+    }
+  }
+
+  void doQuickSort() async {
+    await quickSort(0, (valueList.length - 1));
+    for (int i = 0; i < valueList.length; i++) {
+      stateList[i] = 3;
+    }
+  }
+
+  void refreshState(){
+    for (int i = 0; i < valueList.length; i++) {
+      var rnd = new Random();
+      double res = rnd.nextDouble();
+      setState(() {
+        valueList[i] = res; 
+      });
+    }
+
+    for(int i = 0; i < valueList.length; i++){
+      stateList[i] = 1;
+    }
   }
 
   @override
-  void initState(){
-    for(int i=0; i<valueList.length; i++){
+  void initState() {
+    for (int i = 0; i < valueList.length; i++) {
       var rnd = new Random();
       double res = rnd.nextDouble();
-      valueList[i] = res;
+      valueList[i] = res; 
     }
     super.initState();
   }
@@ -99,11 +219,27 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
         centerTitle: true,
         actions: <Widget>[
+          IconButton(icon: Icon(Icons.refresh), onPressed: refreshState),
           RaisedButton(
-            onPressed: () {
-              bubbleSort();
+            onPressed: () async {
+              await bubbleSort();
+              //await insertionSort();
             },
             child: Text("Bubble Sort"),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              await doQuickSort();
+              //await insertionSort();
+            },
+            child: Text("Quick Sort"),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              await insertionSort();
+              //await insertionSort();
+            },
+            child: Text("Insertion Sort"),
           )
         ],
       ),
