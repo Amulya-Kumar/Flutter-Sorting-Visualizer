@@ -309,36 +309,65 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.black,
         actions: <Widget>[
           IconButton(icon: Icon(Icons.refresh), onPressed: refreshState),
-          RaisedButton(
-            onPressed: () async {
-              await mergeSort(0, valueList.length-1);
-              //await insertionSort();
-            },
-            child: Text("Bubble Sort"),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 5.0),
+            child: FlatButton(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(50),
+              ),
+              color: Colors.white,
+              onPressed: () async {
+                await bubbleSort();
+                //await insertionSort();
+              },
+              child: Text("Bubble Sort"),
+            ),
           ),
-          RaisedButton(
-            onPressed: () async {
-              await doQuickSort();
-              //await insertionSort();
-            },
-            child: Text("Quick Sort"),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 5.0),
+            child: FlatButton(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(50),
+              ),
+              color: Colors.white,
+              onPressed: () async {
+                await doQuickSort();
+                //await insertionSort();
+              },
+              child: Text("Quick Sort"),
+            ),
           ),
-          RaisedButton(
-            onPressed: () async {
-              await insertionSort();
-              //await insertionSort();
-            },
-            child: Text("Insertion Sort"),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 5.0),
+            child: FlatButton(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(50),
+              ),
+              color: Colors.white,
+              onPressed: () async {
+                await insertionSort();
+                //await insertionSort();
+              },
+              child: Text("Insertion Sort"),
+            ),
           ),
-          RaisedButton(
-            onPressed: () async {
-              await doMergeSort();
-              //await insertionSort();
-            },
-            child: Text("Merge Sort"),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 5.0),
+            child: RaisedButton(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(50),
+              ),
+              color: Colors.white,
+              onPressed: () async {
+                await doMergeSort();
+                //await insertionSort();
+              },
+              child: Text("Merge Sort"),
+            ),
           )
         ],
       ),
